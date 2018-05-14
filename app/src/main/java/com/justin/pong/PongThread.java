@@ -24,22 +24,22 @@ import java.util.Random;
  */
 public class PongThread extends Thread {
 
-    public static final int STATE_PAUSE   = 0;
-    public static final int STATE_READY   = 1;
+    public static final int STATE_PAUSE = 0;
+    public static final int STATE_READY = 1;
     public static final int STATE_RUNNING = 2;
-    public static final int STATE_LOSE    = 3;
-    public static final int STATE_WIN     = 4;
+    public static final int STATE_LOSE = 3;
+    public static final int STATE_WIN = 4;
 
-    private static final int    PHYS_BALL_SPEED       = 8;
-    private static final int    PHYS_PADDLE_SPEED     = 8;
-    private static final int    PHYS_FPS              = 60;
-    private static final double PHYS_MAX_BOUNCE_ANGLE = 5 * Math.PI / 12; // 75 degrees in radians
-    private static final int    PHYS_COLLISION_FRAMES = 5;
+    private static final int PHYS_BALL_SPEED = 16;
+    private static final int PHYS_PADDLE_SPEED = 20;
+    private static final int PHYS_FPS = 60;
+    private static final double PHYS_MAX_BOUNCE_ANGLE = 4 * Math.PI / 12; // 75 degrees in radians
+    private static final int PHYS_COLLISION_FRAMES = 5;
 
-    private static final String KEY_HUMAN_PLAYER_DATA    = "humanPlayer";
+    private static final String KEY_HUMAN_PLAYER_DATA = "humanPlayer";
     private static final String KEY_COMPUTER_PLAYER_DATA = "computerPlayer";
-    private static final String KEY_BALL_DATA            = "ball";
-    private static final String KEY_GAME_STATE           = "state";
+    private static final String KEY_BALL_DATA = "ball";
+    private static final String KEY_GAME_STATE = "state";
 
     private static final String TAG = "PongThread";
 
@@ -51,20 +51,20 @@ public class PongThread extends Thread {
 
     private final Context mContext;
 
-    private       boolean mRun;
-    private final Object  mRunLock;
+    private boolean mRun;
+    private final Object mRunLock;
 
     private int mState;
 
     private Player mHumanPlayer;
     private Player mComputerPlayer;
-    private Ball   mBall;
+    private Ball mBall;
 
     private Paint mMedianLinePaint;
 
     private Paint mCanvasBoundsPaint;
-    private int   mCanvasHeight;
-    private int   mCanvasWidth;
+    private int mCanvasHeight;
+    private int mCanvasWidth;
 
     /**
      * Used to make computer to "forget" to move the paddle in order to behave more like a human opponent.
@@ -92,7 +92,7 @@ public class PongThread extends Thread {
 
         TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.PongView);
 
-        int paddleHeight = a.getInt(R.styleable.PongView_paddleHeight, 85);
+        int paddleHeight = a.getInt(R.styleable.PongView_paddleHeight, 185);
         int paddleWidth = a.getInt(R.styleable.PongView_paddleWidth, 25);
         int ballRadius = a.getInt(R.styleable.PongView_ballRadius, 15);
 
@@ -354,16 +354,18 @@ public class PongThread extends Thread {
      * Move the computer paddle to hit the ball.
      */
     private void doAI() {
-        if (mComputerPlayer.bounds.top > mBall.cy) {
-            // move up
-            movePlayer(mComputerPlayer,
-                    mComputerPlayer.bounds.left,
-                    mComputerPlayer.bounds.top - PHYS_PADDLE_SPEED);
-        } else if (mComputerPlayer.bounds.top + mComputerPlayer.paddleHeight < mBall.cy) {
-            // move down
-            movePlayer(mComputerPlayer,
-                    mComputerPlayer.bounds.left,
-                    mComputerPlayer.bounds.top + PHYS_PADDLE_SPEED);
+        if (mBall.dx > 0 && mBall.cx > mCanvasWidth / 2) {
+            if (mComputerPlayer.bounds.top > mBall.cy) {
+                // move up
+                movePlayer(mComputerPlayer,
+                        mComputerPlayer.bounds.left,
+                        mComputerPlayer.bounds.top - PHYS_PADDLE_SPEED);
+            } else if (mComputerPlayer.bounds.top + mComputerPlayer.paddleHeight < mBall.cy) {
+                // move down
+                movePlayer(mComputerPlayer,
+                        mComputerPlayer.bounds.left,
+                        mComputerPlayer.bounds.top + PHYS_PADDLE_SPEED);
+            }
         }
     }
 
